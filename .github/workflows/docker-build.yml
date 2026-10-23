@@ -1,0 +1,25 @@
+name: Build and Test Docker Image
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t my-app:latest .
+
+      - name: Test Docker Container
+        run: |
+          docker run -d -p 8080:80 --name test-container my-app:latest
+          sleep 3
+          curl -f http://localhost:8080 || exit 1
